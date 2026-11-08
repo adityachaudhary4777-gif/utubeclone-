@@ -1,0 +1,457 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StreamTube - Watch Videos</title>
+    <style>
+        * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background: #f9f9f9;
+    color: #222;
+}
+
+.navbar {
+    height: 70px;
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 30px;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    border-bottom: 1px solid #eee;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.logo h2 {
+    font-size: 23px;
+}
+
+.logo h2 span {
+    color: #ff4b4b;
+}
+
+.logo-icon {
+    background: #ff4b4b;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 9px;
+}
+
+.search {
+    display: flex;
+    width: 40%;
+    height: 42px;
+}
+
+.search input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 25px 0 0 25px;
+    outline: none;
+    font-size: 15px;
+}
+
+.search button {
+    width: 60px;
+    border: 1px solid #ccc;
+    border-left: none;
+    border-radius: 0 25px 25px 0;
+    background: #f1f1f1;
+    font-size: 23px;
+    cursor: pointer;
+}
+
+.profile {
+    display: flex;
+    align-items: center;
+    gap: 22px;
+    font-size: 22px;
+}
+
+.profile img {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+}
+
+.container {
+    display: flex;
+}
+
+.sidebar {
+    width: 220px;
+    min-width: 220px;
+    height: calc(100vh - 70px);
+    position: sticky;
+    top: 70px;
+    background: white;
+    padding: 20px 12px;
+}
+
+.sidebar a {
+    display: block;
+    padding: 13px;
+    margin-bottom: 5px;
+    border-radius: 10px;
+    text-decoration: none;
+    color: #333;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+.sidebar a:hover,
+.sidebar .active {
+    background: #eee;
+    font-weight: bold;
+}
+
+.sidebar h4 {
+    padding: 15px 12px;
+    font-size: 13px;
+    color: #666;
+}
+
+.sidebar hr {
+    border: none;
+    border-top: 1px solid #eee;
+    margin: 12px 0;
+}
+
+.content {
+    flex: 1;
+    min-width: 0;
+    padding: 20px 25px;
+}
+
+.categories {
+    display: flex;
+    gap: 12px;
+    overflow-x: auto;
+    padding-bottom: 25px;
+}
+
+.categories button {
+    border: none;
+    background: #eee;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-size: 14px;
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.categories button:hover,
+.categories .selected {
+    background: #222;
+    color: white;
+}
+
+.video-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 30px 20px;
+}
+
+.video-card {
+    cursor: pointer;
+    min-width: 0;
+}
+
+.thumbnail {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    border-radius: 12px;
+    transition: transform 0.2s;
+}
+
+.video-card:hover .thumbnail {
+    transform: scale(1.02);
+}
+
+.video-info {
+    display: flex;
+    gap: 12px;
+    margin-top: 12px;
+}
+
+.video-info img {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.video-info h3 {
+    font-size: 15px;
+    line-height: 1.4;
+    margin-bottom: 8px;
+}
+
+.video-info p {
+    color: #777;
+    font-size: 13px;
+    margin-top: 5px;
+}
+
+footer {
+    text-align: center;
+    padding: 25px;
+    color: #777;
+    font-size: 13px;
+}
+
+@media (max-width: 1100px) {
+    .video-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 700px) {
+    .navbar {
+        padding: 0 12px;
+    }
+
+    .logo h2 {
+        font-size: 18px;
+    }
+
+    .search {
+        width: 45%;
+    }
+
+    .profile {
+        gap: 10px;
+    }
+
+    .sidebar {
+        width: 65px;
+        min-width: 65px;
+        padding: 15px 5px;
+        overflow: hidden;
+    }
+
+    .sidebar a {
+        font-size: 0;
+        text-align: center;
+    }
+
+    .sidebar h4,
+    .sidebar hr {
+        display: none;
+    }
+
+    .content {
+        padding: 15px 10px;
+    }
+
+    .video-grid {
+        grid-template-columns: 1fr;
+        gap: 25px;
+    }
+
+    .categories {
+        gap: 8px;
+    }
+}
+
+@media (max-width: 400px) {
+    .search {
+        width: 38%;
+    }
+
+    .profile span {
+        display: none;
+    }
+}
+
+    </style>
+    
+
+</head>
+<body>
+
+    <header class="navbar">
+
+        <div class="logo">
+            <span class="logo-icon">▶</span>
+            <h2>Stream<span>Tube</span></h2>
+        </div>
+
+        <div class="search">
+            <input type="text" placeholder="Search videos">
+            <button>⌕</button>
+        </div>
+
+        <div class="profile">
+            <span>＋</span>
+            <span>🔔</span>
+            <img src="https://i.pravatar.cc/100?img=12" alt="Profile">
+        </div>
+
+    </header>
+
+    <div class="container">
+
+        <aside class="sidebar">
+            <a class="active">⌂ &nbsp; Home</a>
+            <a>🔥 &nbsp; Trending</a>
+            <a>▶ &nbsp; Subscriptions</a>
+
+            <hr>
+
+            <h4>YOU</h4>
+            <a>📺 &nbsp; Your Channel</a>
+            <a>🕒 &nbsp; History</a>
+            <a>👍 &nbsp; Liked Videos</a>
+            <a>📁 &nbsp; Playlists</a>
+
+            <hr>
+
+            <h4>EXPLORE</h4>
+            <a>🎮 &nbsp; Gaming</a>
+            <a>🎵 &nbsp; Music</a>
+            <a>🏆 &nbsp; Sports</a>
+            <a>💻 &nbsp; Technology</a>
+
+        </aside>
+
+        <main class="content">
+
+            <nav class="categories">
+                <button class="selected">All</button>
+                <button>Music</button>
+                <button>Gaming</button>
+                <button>Technology</button>
+                <button>Movies</button>
+                <button>Fitness</button>
+                <button>Education</button>
+                <button>Live</button>
+            </nav>
+
+            <section class="video-grid">
+
+                <div class="video-card">
+                    <img class="thumbnail" src="https://images.unsplash.com/photo-1519608487953-e999c86e7455?w=600" alt="Night sky">
+                    <div class="video-info">
+                        <img src="https://i.pravatar.cc/100?img=11" alt="Creator">
+                        <div>
+                            <h3>Exploring the Beauty of Our Universe 🌌</h3>
+                            <p>Cosmic World</p>
+                            <p>1.2M views · 2 days ago</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="video-card">
+                    <img class="thumbnail" src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=600" alt="Programming setup">
+                    <div class="video-info">
+                        <img src="https://i.pravatar.cc/100?img=13" alt="Creator">
+                        <div>
+                            <h3>Learn Web Development From Scratch</h3>
+                            <p>Code Academy</p>
+                            <p>850K views · 1 week ago</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="video-card">
+                    <img class="thumbnail" src="https://images.unsplash.com/photo-1511512578047-dfb367046420?w=600" alt="Gaming setup">
+                    <div class="video-info">
+                        <img src="https://i.pravatar.cc/100?img=14" alt="Creator">
+                        <div>
+                            <h3>Best Gaming Moments of 2026</h3>
+                            <p>Game Central</p>
+                            <p>2.4M views · 3 days ago</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="video-card">
+                    <img class="thumbnail" src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=600" alt="Mountain landscape">
+                    <div class="video-info">
+                        <img src="https://i.pravatar.cc/100?img=15" alt="Creator">
+                        <div>
+                            <h3>Beautiful Places You Must Visit</h3>
+                            <p>Travel Diaries</p>
+                            <p>560K views · 5 days ago</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="video-card">
+                    <img class="thumbnail" src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=600" alt="Gym workout">
+                    <div class="video-info">
+                        <img src="https://i.pravatar.cc/100?img=16" alt="Creator">
+                        <div>
+                            <h3>Build Muscle With This Workout Plan</h3>
+                            <p>Fitness Zone</p>
+                            <p>980K views · 4 days ago</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="video-card">
+                    <img class="thumbnail" src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=600" alt="Laptop workspace">
+                    <div class="video-info">
+                        <img src="https://i.pravatar.cc/100?img=17" alt="Creator">
+                        <div>
+                            <h3>Top 10 AI Tools You Should Know</h3>
+                            <p>Tech Insider</p>
+                            <p>1.5M views · 6 days ago</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="video-card">
+                    <img class="thumbnail" src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=600" alt="Music concert">
+                    <div class="video-info">
+                        <img src="https://i.pravatar.cc/100?img=18" alt="Creator">
+                        <div>
+                            <h3>Best Electronic Music Mix 2026</h3>
+                            <p>Music Station</p>
+                            <p>3M views · 1 week ago</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="video-card">
+                    <img class="thumbnail" src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=600" alt="Study desk">
+                    <div class="video-info">
+                        <img src="https://i.pravatar.cc/100?img=19" alt="Creator">
+                        <div>
+                            <h3>How to Stay Focused While Studying</h3>
+                            <p>Study Smart</p>
+                            <p>420K views · 2 weeks ago</p>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+    <footer>
+        <p>© 2026 StreamTube. An independent demo project. All rights reserved.</p>
+    </footer>
+
+</body>
+</html>
